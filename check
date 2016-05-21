@@ -1,0 +1,40 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELL='\033[0;33m' # bold yellow
+
+NC='\033[0m' # No Color
+
+dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+colorDiff="s/^-/\x1b[31m-/;s/^+/\x1b[32m+/;s/^@/\x1b[34m@/;s/$/\x1b[0m/"
+
+cd $dir
+set -o pipefail
+
+for f in *.glsl; do
+    fbname=${f%%.*}
+
+    if [ "${f:0:11}" == "extraCredit" ] && [ "$#" -ne 0 ] ; then
+	    printf "${YELL}Skipping $f${NC}\n"
+	    continue
+    else
+     	../glc < $f > "${fbname}.bc" 2> /dev/null
+
+
+        diff <(../gli "${fbname}.bc" 2> /dev/null) ${fbname}.out | sed $colorDiff
+        result=$?
+    	printf "Test case %s: " $fbname 
+ 
+    	
+    	if (exit $result) ; then
+        	printf "${GREEN}PASS\n"
+   	else
+        	printf "${RED}FAIL\n"  
+    	fi
+
+	printf $NC
+    fi
+   
+done
+
