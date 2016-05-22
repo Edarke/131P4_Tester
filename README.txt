@@ -6,11 +6,12 @@ How to write your own tests:
 Use existing tests as a template to create .glsl and .dat files.
 Create .out file either by running your program or computing the result by hand.
 
-To verify your .out file is correct, copy and paste your .glsl file here: http://shdr.bkcore.com/
-and define add the following function to the bottom:
+To verify your .out file is correct:
+1) copy and paste your .glsl file here: http://shdr.bkcore.com/
+2) Add 'precision highp float;' as the first line in the file
+3) Add the following main method at the bottom
 
-void main()
-{
+void main(){
   if(_YourFunctionHere_() == _YourOuputHere_)
     gl_FragColor = vec4(0,1,0,1.0); // green
   else
@@ -18,16 +19,14 @@ void main()
 }
 
 If your output is correct you will see a green monkey head. If your output is wrong, it'll be red.
-
 Once you verify your test case is correct, create a pull request to share it.
-
 
 
 
 Example (using swizzle.glsl):
 /******Original test case *******/
 vec2 v =  // = .5,  1.5
-float vectassign(){
+float test(){
    vec3 t;
    t = v.xxx + v.xxx; // t = (1, 1, 1)
    vec3 f;
@@ -45,7 +44,7 @@ precision highp float;   // This is always required for shdr.bkcore.com
 vec2 v = vec2(.5, 1.5);  // Add initializers that were declared in .dat file
 
 
-float vectassign(){
+float test(){
    vec3 t;
    t = v.xxx + v.xxx;
    vec3 f;
@@ -58,7 +57,7 @@ float vectassign(){
 }
 
 void main() {
-  if(vectassign() == 2.0) // Assert function call returns expected value
+  if(test() == 2.0) // Assert function call returns expected value
     gl_FragColor = vec4(0,1,0,1.0); // green
   else
     gl_FragColor = vec4(1,0,0,1.0);  // red
