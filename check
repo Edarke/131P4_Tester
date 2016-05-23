@@ -9,33 +9,64 @@ NC='\033[0m' # No Color
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 colorDiff="s/^-/\x1b[31m-/;s/^+/\x1b[32m+/;s/^@/\x1b[34m@/;s/$/\x1b[0m/"
 
-cd $dir
+cd $dir  # This should allow you to call this script from anywhere
 set -o pipefail
 
-rm *.bc
+
+if [ ! -f ../glc ] || [ ! -f ../gli ]; then
+  printf "$YELL Rebuilding project...\n $NC"
+  (cd .. && make clean && make -j8)
+fi
+
+
+if [ ! -f ../glc ] || [ ! -f ../gli ]; then
+  printf "$RED Unable to make project\n $NC"
+  exit 1
+fi
+
+
+rm *.bc 2> /dev/null
+
+
+
+
+
 
 for f in *.glsl; do
     fbname=${f%%.*}
 
     if [ "${f:0:11}" == "extraCredit" ] && [ "$#" -ne 0 ] ; then
-	    printf "${YELL}Skipping $f${NC}\n"
+	    printf "$YELL Skipping $f\n$NC"
 	    continue
     else
-     	../glc < $f > "${fbname}.bc" 2> /dev/null
+        printf "Test case %s: " $fbname
+            	 
+        # glc
+        ../glc < $f > "${fbname}.bc" 2> /dev/null    	 
+        if [ $? -ne 0 ]; then 
+                printf "\n$YELL glc exited with error status\n$NC" $fbname
+                continue
+        fi
 
+        # gli
+        ../gli "${fbname}.bc" &> /dev/null
+        if [ $? -ne 0 ]; then
+                printf "\n$YELL gli exited with error status\n$NC"
+                continue
+        fi
+        
 
+        # Test ouput
         diff <(../gli "${fbname}.bc" 2> /dev/null) ${fbname}.out | sed $colorDiff
         result=$?
-    	printf "Test case %s: " $fbname 
  
-    	
+        
+    	# Print status
     	if (exit $result) ; then
-        	printf "${GREEN}PASS\n"
+        	printf "$GREEN PASS\n$NC"
    	else
-        	printf "${RED}FAIL\n"  
+        	printf "$RED FAIL\n$NC"  
     	fi
-
-	printf $NC
     fi
    
 done
