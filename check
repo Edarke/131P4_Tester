@@ -3,23 +3,26 @@
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELL='\033[0;33m' # bold yellow
+NC='\033[0m' # Default Color
 
-NC='\033[0m' # No Color
+
 
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-colorDiff="s/^-/\x1b[31m-/;s/^+/\x1b[32m+/;s/^@/\x1b[34m@/;s/$/\x1b[0m/"
-
 cd $dir  # This should allow you to call this script from anywhere
+
+
+
 set -o pipefail
 
 
-if [ ! -f ../glc ] || [ ! -f ../gli ]; then
+
+if [ ! -f ../glc ]; then
   printf "$YELL Rebuilding project...\n $NC"
   (cd .. && make clean && make -j8)
 fi
 
 
-if [ ! -f ../glc ] || [ ! -f ../gli ]; then
+if [ ! -f ../glc ]; then
   printf "$RED Unable to make project\n $NC"
   exit 1
 fi
@@ -32,42 +35,43 @@ rm *.bc 2> /dev/null
 
 
 
-for f in *.glsl; do
-    fbname=${f%%.*}
+for glsl in *.glsl; do
+        fbname=${glsl%%.*}
+        bc=${fbname}.bc
+        out=${fbname}.out
 
-    if [ "${f:0:11}" == "extraCredit" ] && [ "$#" -ne 0 ] ; then
-	    printf "$YELL Skipping $f\n$NC"
-	    continue
-    else
-        printf "Test case %s: " $fbname
+        printf "${NC}Test case %s: " $fbname
             	 
         # glc
-        ../glc < $f > "${fbname}.bc" 2> /dev/null    	 
+        ../glc < $glsl > $bc 2> /dev/null    	 
         if [ $? -ne 0 ]; then 
-                printf "\n$YELL glc exited with error status\n$NC" $fbname
+                printf "$YELL\nglc exited with error status\n"
+                printf "run '../glc < $glsl' for more info\n"
                 continue
         fi
 
         # gli
-        ../gli "${fbname}.bc" &> /dev/null
+        ../gli $bc &> /dev/null
         if [ $? -ne 0 ]; then
-                printf "\n$YELL gli exited with error status\n$NC"
+                printf "$YELL\ngli exited with error status\n"
+                printf "run '../gli $bc' for more info\n"
                 continue
         fi
-        
+
 
         # Test ouput
-        diff <(../gli "${fbname}.bc" 2> /dev/null) ${fbname}.out | sed $colorDiff
+        diff <(../gli $bc 2> /dev/null) $out
         result=$?
- 
-        
-    	# Print status
-    	if (exit $result) ; then
-        	printf "$GREEN PASS\n$NC"
-   	else
-        	printf "$RED FAIL\n$NC"  
-    	fi
-    fi
-   
+
+
+        # Print status
+        if (exit $result) ; then
+                printf "$GREEN PASS\n"
+        else
+                printf "$RED FAIL\n"  
+        fi 
 done
+
+
+printf $NC
 
