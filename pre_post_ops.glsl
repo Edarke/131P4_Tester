@@ -17,10 +17,12 @@ float test(){
 
 /*
 void main()
+
+void main()
 {
-  if(test() == 3432355.0) // Assert function returns expected value
-    gl_FragColor = vec4(0,1,0,1.0); // green
+  if(test() == 14911715) // Assert function returns expected value
+    fragColor = vec4(0,1,0,1.0); // green
   else
-    gl_FragColor = vec4(1,0,0,1.0);  // red
+    fragColor = vec4(1,0,0,1.0);  // red
 }
 */
