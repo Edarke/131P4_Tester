@@ -20,6 +20,11 @@ int test(){
 			  	continue;
 			  else if(c + r < 15) 
 			  	sum += c*r;
+			  else
+			     switch(r){
+			        case 5: continue;
+			        default: ++sum;
+			     }
 		 
 		if(c == 10)
 			if(r == 10)
@@ -28,12 +33,12 @@ int test(){
 	}
 	return sum;        
 }
-// Expected output: 10665
+// Expected output: 10755
 
 /*
 void main()
 {
-  if(test() == 10665) // Assert function returns expected value
+  if(test() == 10755) // Assert function returns expected value
     fragColor = vec4(0,1,0,1.0); // green
   else
     fragColor = vec4(1,0,0,1.0);  // red
