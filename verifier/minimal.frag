@@ -17,48 +17,37 @@ out vec4 fragColor;
 
 
 
-int y =  3;
-
-
-int test2(){
-   return ++y;
-}
 
 
 int test(){
-  y = 1;
-  int y = 10;   // y = 10, GlobalY = 1
-  
-  {
-        int y = ++y;  // y = 11  See pg 44 of spec
-  }
-  
-  int i = 0;
-  for(i = 0; i < 10; ++i)
-       int y = 0;
-  
-  while(i == 10){
-    ++y;
-    int y = 0;
-    i = 1;
-  }
-  // y = 12, GlobalY = 1
-  
-  
-  if(i != 0)
-     int y = 0;
+	int x[5];
+	int i = 0;
+	for(i = 0; i < 5; ++i){
+		x[i] = 4-i;
+	}
+	
+
+	for(i = 0; i < 5; i += 2){
+		x[x[x[i]]] = x[x[i]];
+	}
+
+        // x = 03210
      
-  int globalY = test2();
-  // y = 12, GlobalY = 2
-  
-  return globalY*1000 + y;  // 2012
+   for(i = 0; i < 4; i = i){
+     x[++i] += 1;
+     ++i;
+   }     
+ 
+
+	return  x[0]*10000 + x[1]*1000 + x[2]*100 + x[3]*10 + x[4]; // 4220
 }
-// Expected output: 2012
+
+// Expected output: 4220
 
 
 void main()
 {
-  if(test() == 2012) // Assert function returns expected value
+  if(test() == 4220) // Assert function returns expected value
     fragColor = vec4(0,1,0,1.0); // green
   else
     fragColor = vec4(1.0,0,0,1.0);  // red
