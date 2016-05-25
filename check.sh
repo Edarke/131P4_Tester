@@ -1,8 +1,10 @@
 #!/bin/bash
 
+# Running './check.sh' will not rebuild your project, but './check.sh .' will
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELL='\033[0;33m' # bold yellow
+YELL='\033[0;33m' 
 NC='\033[0m' # Default Color
 
 
@@ -12,11 +14,9 @@ cd $dir  # This should allow you to call this script from anywhere
 
 
 
-set -o pipefail
 
-
-
-if [ ! -f ../glc ]; then
+# If glc is missing or argument is specified, rebuild project
+if [ ! -f ../glc ] || [ $# -eq 1 ]; then
   printf "$YELL Rebuilding project...\n $NC"
   (cd .. && make clean && make -j8)
 fi
@@ -46,7 +46,7 @@ for glsl in *.glsl; do
         ../glc < $glsl > $bc 2> /dev/null    	 
         if [ $? -ne 0 ]; then 
                 printf "$YELL\nglc exited with error status\n"
-                printf "run '../glc < $glsl' for more info\n"
+                printf "run  ../glc < $glsl  for more info\n"
                 continue
         fi
 
@@ -54,18 +54,14 @@ for glsl in *.glsl; do
         ../gli $bc &> /dev/null
         if [ $? -ne 0 ]; then
                 printf "$YELL\ngli exited with error status\n"
-                printf "run '../gli $bc' for more info\n"
+                printf "run  ../gli $bc  for more info\n"
                 continue
         fi
 
 
-        # Test ouput
-        diff <(../gli $bc 2> /dev/null) $out
-        result=$?
 
-
-        # Print status
-        if (exit $result) ; then
+        # Print Result
+        if diff <(../gli $bc 2> /dev/null) $out ; then
                 printf "$GREEN PASS\n"
         else
                 printf "$RED FAIL\n"  
