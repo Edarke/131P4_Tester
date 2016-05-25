@@ -21,6 +21,12 @@ int test(){
 	return y*1000 + x;  // Should be 3000
 	++x;
 	return -1; 
+	
+	if(true)
+		return -2;
+	else 
+		return -3;
+	return -4;
 }
 // Expected output: 3000
 
