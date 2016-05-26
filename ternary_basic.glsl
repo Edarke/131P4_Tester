@@ -11,7 +11,7 @@ bool test(){
   checkpoint = checkpoint ? true : false;
   
   float f = 1.0;
-  float f = true ? 2.0 : 3.0;
+  f = true ? 2.0 : 3.0;
   checkpoint = checkpoint && f == 2.0;
   
   
