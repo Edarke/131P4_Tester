@@ -41,11 +41,13 @@ rm *.bc 2> /dev/null
 function runTest {
 		path=$1
 		glsl=$2
+        prefix=$3
         fbname=${glsl%%.*}
         bc=${fbname}.bc
         out=${fbname}.out
+        
 
-        printf "${NC}Test case %s: " $fbname
+        printf "${NC}${prefix}Test case %s: " $fbname
             	 
         # glc
         eval $path/glc < $glsl > $bc 2> /dev/null    	 
@@ -79,13 +81,13 @@ function runTest {
 
 
 for glsl in *.glsl; do
-	runTest .. $glsl
+	runTest .. $glsl ""
 done
 
 if [ -d $TA ]; then
 	cd $TA
 	for glsl in *.glsl; do
-		runTest ../.. $glsl 
+		runTest ../.. $glsl "Official " 
 	done
 else 
 	printf "$YELL Could not find directory: $TA\n"
