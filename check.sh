@@ -7,6 +7,7 @@ GREEN='\033[0;32m'
 YELL='\033[0;33m' 
 NC='\033[0m' # Default Color
 
+TA="cse131_testcases"  # name of directory containing TA's test cases
 
 
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -35,7 +36,11 @@ rm *.bc 2> /dev/null
 
 
 
-for glsl in *.glsl; do
+
+
+function runTest {
+		path=$1
+		glsl=$2
         fbname=${glsl%%.*}
         bc=${fbname}.bc
         out=${fbname}.out
@@ -43,7 +48,7 @@ for glsl in *.glsl; do
         printf "${NC}Test case %s: " $fbname
             	 
         # glc
-        ../glc < $glsl > $bc 2> /dev/null    	 
+        eval $path/glc < $glsl > $bc 2> /dev/null    	 
         if [ $? -ne 0 ]; then 
                 printf "$YELL\nglc exited with error status\n"
                 printf "run  ../glc < $glsl  for more info\n"
@@ -51,7 +56,7 @@ for glsl in *.glsl; do
         fi
 
         # gli
-        ../gli $bc &> /dev/null
+        eval $path/gli $bc &> /dev/null
         if [ $? -ne 0 ]; then
                 printf "$YELL\ngli exited with error status\n"
                 printf "run  ../gli $bc  for more info\n"
@@ -61,12 +66,34 @@ for glsl in *.glsl; do
 
 
         # Print Result
-        if diff <(../gli $bc 2> /dev/null) $out ; then
+        if diff <(eval $path/gli $bc 2> /dev/null) $out ; then
                 printf "$GREEN PASS\n"
         else
                 printf "$RED FAIL\n"  
-        fi 
+        fi
+}
+
+
+
+
+
+
+for glsl in *.glsl; do
+	runTest .. $glsl
 done
+
+if [ -d $TA ]; then
+	cd $TA
+	for glsl in *.glsl; do
+		runTest ../.. $glsl 
+	done
+else 
+	printf "$YELL Could not find directory: $TA\n"
+fi
+
+
+
+
 
 
 printf $NC
