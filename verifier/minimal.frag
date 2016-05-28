@@ -19,27 +19,31 @@ out vec4 fragColor;
 
 
 
-int test(){
-	int x[5];
-	int i = 0;
-	for(i = 0; i < 5; ++i){
-		x[i] = 4-i;
-	}
-	
+bool test(){
+  int x = 1;
+  int y = -(++x);
 
-	for(i = 0; i < 5; i += 2){
-		x[x[x[i]]] = x[x[i]];
-	}
+  bool checkpoint = y == -2;
 
-        // x = 03210
-     
-   for(i = 0; i < 4; i = i){
-     x[++i] += 1;
-     ++i;
-   }     
- 
+  int z = +(x++);
+  checkpoint = checkpoint && z == 2;
 
-	return  x[0]*10000 + x[1]*1000 + x[2]*100 + x[3]*10 + x[4]; // 4220
+
+  int array[3];
+  array[0] = 1;
+  array[1] = 2;
+  array[2] = 3;
+
+  int i = 0; 
+  int a = ++array[++i];
+
+  checkpoint = checkpoint && i == 1 && a == 3 && array[1] == 3;
+
+  
+  
+
+
+  return checkpoint;
 }
 
 // Expected output: 4220
@@ -47,9 +51,6 @@ int test(){
 
 void main()
 {
-  if(test() == 4220) // Assert function returns expected value
-    fragColor = vec4(0,1,0,1.0); // green
-  else
-    fragColor = vec4(1.0,0,0,1.0);  // red
+      fragColor = vec4(0,test(),0,1.0); // green
 }
 
