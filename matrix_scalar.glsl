@@ -37,6 +37,16 @@ bool test(){
 	m3 = m3 - 1.0;
 	checkpoint = checkpoint && m3[0][0] == 2.0 && m3[1][1] == 10.0 && m3[2][1] == 16.0;
 	
+	
+	m3 = m3 * 2.0;
+	checkpoint = checkpoint && m3[0][0] == 4.0 && m3[1][1] == 20.0 && m3[2][1] == 32.0;
+	
+	
+	m3 += 1.0;
+	m3 /= 1.0;
+	checkpoint = checkpoint && m3[0].x == 5.0 && m3[1].y == 21.0 && m3[2].y == 33.0;
+	
+	
 	return checkpoint;
 }
 // Expected output: 3432355
