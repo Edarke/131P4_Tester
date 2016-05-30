@@ -1,6 +1,7 @@
 //precision highp float;   
 
 mat3 m3;
+
 vec3 r1;
 vec3 r2;
 vec3 r3;
