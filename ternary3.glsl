@@ -14,7 +14,7 @@ bool foo(){
 }
 
 bool test(){
-	return true ? (false? test() : foo()) : bar();
+	return true ? (false? bar() : foo()) : bar();
 }
 // Expected output: 3432355
 
