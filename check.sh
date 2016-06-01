@@ -50,7 +50,7 @@ function runTest {
         printf "${NC}${prefix}Test case %s: " $fbname
             	 
         # glc
-        eval $path/glc < $glsl > $bc 2> /dev/null    	 
+        eval $path/glc < $glsl > $bc     	 
         if [ $? -ne 0 ]; then 
                 printf "$YELL\nglc exited with error status\n"
                 printf "run  ../glc < $glsl  for more info\n"

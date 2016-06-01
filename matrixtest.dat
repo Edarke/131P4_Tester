@@ -1,0 +1,4 @@
+funct: matrix
+gin: a, mat2, 1.0, 2.0, 3.0, 4.0
+gin: c, vec2, 1.0, 2.0
+gin: d, vec2, 5.0, 8.0
